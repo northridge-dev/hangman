@@ -26,6 +26,17 @@ def render_board(guessed_word, incorrect_guesses):
     print("\n" * 3)
 
 
+def is_invalid_guess(current_guess, guessed_word, incorrect_guesses):
+    """Returns True and help message if not a single letter or letter has previously been guessed"""
+    if current_guess not in "abcdefghijklmnopqrstuvwxyz" or len(current_guess) > 1:
+        return (True, "Invalid guess. Please enter a single letter.")
+
+    if current_guess in guessed_word or current_guess in incorrect_guesses:
+        return (True, f"You've alredy guessed {current_guess}.")
+
+    return (False, "")
+
+
 def check_guess(current_guess, secret_word, guessed_word, incorrect_guesses):
     """Check the current guess and update the game state"""
     incorrect = True  # Flag toggled to false if the guess is correct
@@ -48,12 +59,21 @@ def play_hangman():
         guessed_word = ["_"] * len(secret_word)
         incorrect_guesses = []
         max_incorrect_guesses = len(HANGMAN_PICS) - 1
+        help_msg = ""
 
         # Main game loop, continues until the game is won or lost
         while True:
             render_board(guessed_word, incorrect_guesses)
 
+            print(help_msg)
             current_guess = input("Enter a letter: ").lower()
+
+            is_invalid, help_msg = is_invalid_guess(
+                current_guess, guessed_word, incorrect_guesses
+            )
+
+            if is_invalid:
+                continue
 
             # Updates `guessed_word` and `incorrect_guesses`
             check_guess(current_guess, secret_word, guessed_word, incorrect_guesses)
