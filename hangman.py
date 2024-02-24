@@ -3,35 +3,21 @@
 import os
 from ascii_art import BANNER, HANGMAN_PICS
 
-"""
-Here's where you'll write your code. 
-  - Follow the instructions in the README file.
-  - If you try to write all the code in `play_hangman`, 
-    it's going to be a mess. Instead, break your logic
-    into smaller functions that you can call from 
-    `play_hangman`.
-
-Run your code from the terminal:
-  - make sure you're in the right directory (`projects/hangman`)
-    - if you're not sure how to get to the right directory, ask!
-  - make sure you're at the command line prompt, not in the Python shell (not >>>)
-  - type the following command: python hangman.py
-
-Tests? No tests for this project. 
-"""
-
 
 def clear_screen():
+    """Clear the terminal screen"""
     os.system("clear")
 
 
 def start_game():
+    """Display the game banner and wait for the user to start the game"""
     print(BANNER)
     input("Press enter to start the game")
     clear_screen()
 
 
 def render_board(guessed_word, incorrect_guesses):
+    """Render the game board"""
     clear_screen()
     print("\n" * 3)
     print(HANGMAN_PICS[len(incorrect_guesses)], end="\n\n")
@@ -41,7 +27,8 @@ def render_board(guessed_word, incorrect_guesses):
 
 
 def check_guess(current_guess, secret_word, guessed_word, incorrect_guesses):
-    incorrect = True
+    """Check the current guess and update the game state"""
+    incorrect = True  # Flag toggled to false if the guess is correct
 
     for i, letter in enumerate(secret_word):
         if letter == current_guess:
@@ -62,23 +49,32 @@ def play_hangman():
         incorrect_guesses = []
         max_incorrect_guesses = len(HANGMAN_PICS) - 1
 
-        while len(incorrect_guesses) < max_incorrect_guesses:
+        # Main game loop, continues until the game is won or lost
+        while True:
             render_board(guessed_word, incorrect_guesses)
+
             current_guess = input("Enter a letter: ").lower()
+
+            # Updates `guessed_word` and `incorrect_guesses`
             check_guess(current_guess, secret_word, guessed_word, incorrect_guesses)
 
+            # Test if lost
             if len(incorrect_guesses) == max_incorrect_guesses:
                 render_board(guessed_word, incorrect_guesses)
                 print("You lost! The word was", secret_word)
                 break
+
+            # Test if won
             if "_" not in guessed_word:
                 render_board(guessed_word, incorrect_guesses)
                 print("You won!")
                 break
 
+        # Offer to play again. If user declines, break outer loop and exit program
         play_again = input("Do you want to play again? (y/n): ").lower()
         clear_screen()
         if play_again != "y":
+            print("Buh-bye!")
             break
 
 
